@@ -20,12 +20,12 @@ func main() {
 	rbys[s2.value] = []Restriction{ContainsSubstringRestriction{"subcadena 11", "11"}}
 
 	stackMemory := make([]Symbol, 1000)
-	stackMemory = dfa.initialize(dfa.s, stackMemory)
+	dfa.initialize(dfa.s, stackMemory)
 
 	for i := 0; i < len(dfa.K); i++ {
 		fmt.Printf("Estado %d	|\n", i)
 		for j := 0; j < len(dfa.K[i].transitions); j++ {
-			δ := dfa.K[i].transitions[j]
+			//δ := dfa.K[i].transitions[j]
 			//fmt.Printf("δ: %s x %s → %s", δ.q., δ.z, δ.result)
 			//TODO NAME STATES
 		}

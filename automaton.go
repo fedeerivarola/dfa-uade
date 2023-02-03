@@ -57,9 +57,10 @@ func NewAutomaton(alphabet Σ) *Automaton {
 	}
 }
 
-func (a Automaton) initialize(state State, stack []Symbol) []Symbol {
+func (a Automaton) initialize(state State, stack []Symbol) {
+	//get symbols from alphabet
 	symbols := a.alphabet.symbols
-	actualStack := stack
+	actualStack := stack //stack memory
 
 	for i := 0; i < len(symbols); i++ {
 		//get symbol 'z'
@@ -72,7 +73,7 @@ func (a Automaton) initialize(state State, stack []Symbol) []Symbol {
 			//get symbol 'y'
 			y := symbols[j]
 
-			//get restrictions for symbol
+			//evaluate restrictions for symbol z concatenating y
 			for c := 0; c < len(conditionsBySymbol); c++ {
 				restriction := conditionsBySymbol[c]
 
@@ -85,6 +86,7 @@ func (a Automaton) initialize(state State, stack []Symbol) []Symbol {
 				a.K = append(a.K, *newState)
 
 				if isAccepted {
+					//add new valid state and transition
 					state.stack = actualStack
 					state.transitions = append(state.transitions, δ{
 						q:      &state,
@@ -92,8 +94,9 @@ func (a Automaton) initialize(state State, stack []Symbol) []Symbol {
 						result: newState,
 					})
 
-					//call recursive for initialize new state
-					a.initialize(*newState, actualStack)
+					//TO DO Check if state exist
+					//call recursive for initialize new state in a new thread of execution
+					go a.initialize(*newState, actualStack)
 				} else {
 					//error state
 					newState.err = true
@@ -106,7 +109,7 @@ func (a Automaton) initialize(state State, stack []Symbol) []Symbol {
 			}
 		}
 
-		//run state with new stack
+		//run state with new stack in a new thread of execution
 		go a.initialize(state, append(actualStack, z))
 	}
 }
